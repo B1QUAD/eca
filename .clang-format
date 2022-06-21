@@ -1,0 +1,11 @@
+BasedOnStyle: Google
+Standard: Cpp11
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+ColumnLimit: 0
+SpaceBeforeParens: ControlStatements
+PointerAlignment: Left
+AccessModifierOffset: -4
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
