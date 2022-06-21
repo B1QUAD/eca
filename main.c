@@ -66,27 +66,26 @@ int main(int argc, char** argv) {
 	while (generations) {
 		for (uint64_t i = 0; i < (current->numChunks * chunkSize); i++) {
 			j = (current->numChunks * chunkSize) - (i + 1);
-			
+
 			cur = 0;
 			cur = extract(j, current);
 			printf("%c", ('#' * cur) | (' ' * !cur));
-			// printf("(%lu %d) ", j, cur);	
+			// printf("(%lu %d) ", j, cur);
 
 			// Sliding window
-			cur = extract(j + 1, current);
-			cur = cur << 1;
-			cur |= extract(j, current);
-			cur = cur << 1;
-			cur |= extract(j - 1, current);
-			cur = eval(cur, rule);
-			setBit(j, cur, result);		
-		}
-		// Swap buffers
+			cur = (extract(j + 1, current) << 2)
+				| (extract(j, current) << 1)
+				| extract(j - 1, current);
 
+			cur = eval(cur, rule);
+			setBit(j, cur, result);
+		}
+
+		// Swap buffers
 		tmp = current;
 		current = result;
 		result = tmp;
-		
+
 		printf("\n");
 		generations--;
 	}
