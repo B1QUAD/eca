@@ -2,9 +2,9 @@
  * (Mostly) Branchless rule 110 implementation
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 const char t = '*', f = ' ';
 const uint8_t maxChunks = 1, chunkSize = 64;
@@ -15,12 +15,12 @@ typedef struct set {
 	uint8_t numChunks;
 } set_t;
 
-uint8_t extract (uint64_t index, set_t* set) {
+uint8_t extract(uint64_t index, set_t* set) {
 	// Base + offset calculation
 	// frame(index) = index / frameSize
 	// subIndex(index) = index % frameSize
 	// return set->chunks[index / frameSize] & (0b1 >> (index % frameSize));
-	
+
 	// Branchless boundchecking
 	// Clamp index within maxFrames to stop invalid reads
 	// Set output to zero for out of bounds
@@ -29,24 +29,24 @@ uint8_t extract (uint64_t index, set_t* set) {
 	return (beta * (set->chunks[beta * alpha] & ((uint64_t)0b1 << (index % chunkSize)))) > 0;
 }
 
-void setBit (uint64_t index, uint8_t value, set_t* set) {
+void setBit(uint64_t index, uint8_t value, set_t* set) {
 	uint64_t* ptr = &set->chunks[index / chunkSize];
-	value = value > 0; // Clamp
+	value = value > 0;	// Clamp
 
 	*ptr = (*ptr & ~((uint64_t)0b1 << (index % chunkSize))) | ((uint64_t)value << (index % chunkSize));
 }
 
-void initSet (set_t* input, uint8_t numChunks) {
+void initSet(set_t* input, uint8_t numChunks) {
 	input->chunks = calloc(numChunks, sizeof(uint64_t));
 	input->numChunks = numChunks;
 }
 
 // Elementary Cellular Automaton helper functions
-uint8_t eval (uint8_t input, uint8_t rule) {
+uint8_t eval(uint8_t input, uint8_t rule) {
 	return (rule >> input) & 0b1;
-} 
+}
 
-int main (int argc, char** argv) {
+int main(int argc, char** argv) {
 	// Program interprets current buffer and writes to result
 	// Then swaps them and repeats
 	set_t* current = malloc(sizeof(set_t));
